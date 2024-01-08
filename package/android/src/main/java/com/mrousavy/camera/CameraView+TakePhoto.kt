@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
 import android.graphics.Matrix
 import android.hardware.camera2.*
+import androidx.exifinterface.media.ExifInterface
 import android.util.Log
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
@@ -71,7 +72,32 @@ private fun writePhotoToFile(photo: CameraSession.CapturedPhoto, file: File) {
     val imageBytes = ByteArray(byteBuffer.remaining()).apply { byteBuffer.get(this) }
     val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     val matrix = Matrix()
-    matrix.preScale(-1f, 1f)
+    // Fix rotation of the mirrored image
+    val exif = ExifInterface(imageBytes.inputStream())
+    val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)
+    when (orientation) {
+      ExifInterface.ORIENTATION_ROTATE_180 -> {
+        matrix.setRotate(180f)
+        matrix.postScale(-1f, 1f)
+      }
+      ExifInterface.ORIENTATION_FLIP_VERTICAL -> {
+        matrix.setRotate(180f)
+      }
+      ExifInterface.ORIENTATION_TRANSPOSE -> {
+        matrix.setRotate(90f)
+      }
+      ExifInterface.ORIENTATION_ROTATE_90 -> {
+        matrix.setRotate(90f)
+        matrix.postScale(-1f, 1f)
+      }
+      ExifInterface.ORIENTATION_TRANSVERSE -> {
+        matrix.setRotate(-90f)
+      }
+      ExifInterface.ORIENTATION_ROTATE_270 -> {
+        matrix.setRotate(-90f)
+        matrix.postScale(-1f, 1f)
+      }
+    }
     val processedBitmap =
       Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false)
     FileOutputStream(file).use { stream ->
