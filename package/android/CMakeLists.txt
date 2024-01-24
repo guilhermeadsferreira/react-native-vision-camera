@@ -23,17 +23,21 @@ endif()
 add_library(
         ${PACKAGE_NAME}
         SHARED
-        ../cpp/JSITypedArray.cpp
+        # Shared C++
+        ../cpp/MutableRawBuffer.cpp
+        # Java JNI
         src/main/cpp/VisionCamera.cpp
         src/main/cpp/VideoPipeline.cpp
         src/main/cpp/PassThroughShader.cpp
         src/main/cpp/OpenGLContext.cpp
         src/main/cpp/OpenGLRenderer.cpp
+        src/main/cpp/MutableJByteBuffer.cpp
         # Frame Processor
         src/main/cpp/frameprocessor/FrameHostObject.cpp
         src/main/cpp/frameprocessor/FrameProcessorPluginHostObject.cpp
         src/main/cpp/frameprocessor/JSIJNIConversion.cpp
         src/main/cpp/frameprocessor/VisionCameraProxy.cpp
+        src/main/cpp/frameprocessor/java-bindings/JSharedArray.cpp
         src/main/cpp/frameprocessor/java-bindings/JFrame.cpp
         src/main/cpp/frameprocessor/java-bindings/JFrameProcessor.cpp
         src/main/cpp/frameprocessor/java-bindings/JFrameProcessorPlugin.cpp

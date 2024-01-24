@@ -106,6 +106,7 @@ class RecorderError(name: String, extra: Int) :
   CameraError("capture", "recorder-error", "An error occured while recording a video! $name $extra")
 class NoRecordingInProgressError :
   CameraError("capture", "no-recording-in-progress", "There was no active video recording in progress! Did you call stopRecording() twice?")
+class InsufficientStorageError : CameraError("capture", "insufficient-storage", "There is not enough storage space available.")
 class RecordingInProgressError :
   CameraError(
     "capture",
@@ -118,6 +119,13 @@ class CodeTypeNotSupportedError(codeType: String) :
     "code-scanner",
     "code-type-not-supported",
     "The codeType \"$codeType\" is not supported by the Code Scanner!"
+  )
+class CodeScannerTooManyOutputsError :
+  CameraError(
+    "code-scanner",
+    "not-compatible-with-outputs",
+    "CodeScanner can only be enabled when both video and frameProcessor are disabled! " +
+      "Use a Frame Processor Plugin for code scanning instead."
   )
 
 class ViewNotFoundError(viewId: Int) :
